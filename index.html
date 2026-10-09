@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Proyecto académico de reducción de dimensionalidad aplicado al conjunto de datos Bank Marketing.">
+  <title>Reducción de Dimensionalidad | Bank Marketing</title>
+  <style>
+    :root {
+      --bg: #0b1020; --panel: #121a2d; --panel2: #18233a; --text: #eef3ff;
+      --muted: #a8b5ce; --line: #2a3853; --accent: #68e0c0; --accent2: #8aa7ff;
+      --warn: #ffcc80; --danger: #ff8e9b; --radius: 20px; --max: 1120px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; background: radial-gradient(ellipse at 80% 0%, #172744 0, transparent 38%), var(--bg);
+      color: var(--text); font: 16px/1.65 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap { width: min(var(--max), calc(100% - 40px)); margin: auto; }
+    header { border-bottom: 1px solid var(--line); background: rgba(11,16,32,.82); position: sticky; top: 0; z-index: 10; backdrop-filter: blur(14px); }
+    .nav { min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .brand { font-weight: 800; letter-spacing: -.03em; }
+    .brand span { color: var(--accent); }
+    nav { display: flex; flex-wrap: wrap; gap: 18px; font-size: .92rem; }
+    nav a { color: var(--muted); }
+    .hero { padding: 88px 0 64px; }
+    .eyebrow { color: var(--accent); font-weight: 750; text-transform: uppercase; letter-spacing: .13em; font-size: .78rem; }
+    h1 { font-size: clamp(2.5rem, 6vw, 4.8rem); line-height: 1.04; letter-spacing: -.055em; max-width: 850px; margin: 18px 0; }
+    h1 em { color: var(--accent); font-style: normal; }
+    .lead { color: var(--muted); font-size: 1.15rem; max-width: 760px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--line); padding: 11px 17px; border-radius: 12px; font-weight: 700; color: var(--text); background: var(--panel); }
+    .btn.primary { background: var(--accent); color: #062018; border-color: var(--accent); }
+    section { padding: 58px 0; scroll-margin-top: 85px; }
+    .section-head { max-width: 760px; margin-bottom: 28px; }
+    h2 { font-size: clamp(1.8rem, 4vw, 2.7rem); line-height: 1.15; letter-spacing: -.035em; margin: 8px 0 12px; }
+    h3 { margin: 0 0 8px; font-size: 1.12rem; }
+    p { margin: 0 0 13px; }
+    .muted { color: var(--muted); }
+    .grid { display: grid; gap: 16px; }
+    .stats { grid-template-columns: repeat(4, 1fr); }
+    .cards { grid-template-columns: repeat(3, 1fr); }
+    .card, .stat, .method, .result-panel { background: linear-gradient(145deg, rgba(24,35,58,.96), rgba(18,26,45,.96)); border: 1px solid var(--line); border-radius: var(--radius); padding: 23px; }
+    .stat .number { font-size: clamp(1.8rem, 3vw, 2.5rem); line-height: 1.2; font-weight: 850; letter-spacing: -.04em; color: var(--accent); }
+    .stat .label { color: var(--muted); font-size: .92rem; margin-top: 7px; }
+    .pill { display: inline-block; font-size: .78rem; padding: 4px 9px; border-radius: 99px; background: rgba(104,224,192,.12); color: var(--accent); border: 1px solid rgba(104,224,192,.22); margin-bottom: 12px; }
+    .method p, .card p { color: var(--muted); }
+    .method .symbol { font-size: 1.5rem; margin-bottom: 10px; }
+    .callout { border-left: 3px solid var(--accent); background: rgba(104,224,192,.07); padding: 18px 20px; border-radius: 0 12px 12px 0; color: var(--muted); }
+    .callout strong { color: var(--text); }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; }
+    table { border-collapse: collapse; width: 100%; min-width: 570px; background: rgba(18,26,45,.8); }
+    th, td { padding: 14px 16px; border-bottom: 1px solid var(--line); text-align: left; }
+    th { color: var(--muted); font-size: .85rem; background: var(--panel2); }
+    tr:last-child td { border-bottom: 0; }
+    code { background: #0a1222; color: #b8caff; border: 1px solid var(--line); padding: 2px 6px; border-radius: 6px; font-size: .9em; }
+    .bar-row { display: grid; grid-template-columns: 130px 1fr 90px; align-items: center; gap: 12px; margin: 18px 0; }
+    .bar-track { height: 12px; background: #0a1222; border-radius: 99px; overflow: hidden; }
+    .bar { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--accent2), var(--accent)); }
+    .bar-value { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); font-size: .9rem; }
+    .warning { border-color: rgba(255,204,128,.35); background: rgba(255,204,128,.07); }
+    .warning .pill { color: var(--warn); background: rgba(255,204,128,.1); border-color: rgba(255,204,128,.25); }
+    .checklist { list-style: none; padding: 0; margin: 0; }
+    .checklist li { padding: 12px 0 12px 30px; border-bottom: 1px solid var(--line); position: relative; color: var(--muted); }
+    .checklist li:last-child { border-bottom: 0; }
+    .checklist li::before { content: "✓"; position: absolute; left: 0; color: var(--accent); font-weight: 900; }
+    .conclusion { font-size: 1.08rem; color: #dbe5f8; }
+    footer { border-top: 1px solid var(--line); padding: 30px 0 42px; color: var(--muted); font-size: .9rem; }
+    .footer-inner { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+    @media (max-width: 800px) { .stats { grid-template-columns: repeat(2, 1fr); } .cards { grid-template-columns: 1fr; } .nav { align-items: flex-start; padding: 16px 0; flex-direction: column; } nav { gap: 12px; } .hero { padding-top: 58px; } }
+    @media (max-width: 480px) { .wrap { width: min(100% - 28px, var(--max)); } .stats { grid-template-columns: 1fr 1fr; } .stat, .card, .method, .result-panel { padding: 17px; } .bar-row { grid-template-columns: 95px 1fr 70px; gap: 8px; font-size: .9rem; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="#inicio">DATA<span>LAB</span> · Bank Marketing</a>
+      <nav aria-label="Navegación principal">
+        <a href="#proyecto">Proyecto</a><a href="#metodos">Métodos</a><a href="#resultados">Resultados</a><a href="#limitaciones">Limitaciones</a><a href="#conclusion">Conclusión</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="inicio">
+      <div class="wrap">
+        <div class="eyebrow">Proyecto de ciencia de datos · Machine Learning</div>
+        <h1>Menos variables.<br><em>Más claridad</em> en los datos.</h1>
+        <p class="lead">Reducción de dimensionalidad aplicada al conjunto Bank Marketing para explorar qué características numéricas presentan mayor asociación con la contratación de un depósito bancario.</p>
+        <div class="actions">
+          <a class="btn primary" href="#resultados">Explorar resultados ↓</a>
+          <a class="btn" href="#metodos">Conocer los métodos</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="proyecto">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="eyebrow">01 · Contexto</div>
+          <h2>¿De qué trata el proyecto?</h2>
+          <p class="muted">El propósito es simplificar las características utilizadas para analizar los resultados de campañas de marketing telefónico de una entidad bancaria, manteniendo la variable que se desea estudiar.</p>
+        </div>
+        <div class="grid stats">
+          <div class="stat"><div class="number">41.188</div><div class="label">registros del dataset</div></div>
+          <div class="stat"><div class="number">21</div><div class="label">columnas en el archivo original</div></div>
+          <div class="stat"><div class="number">10</div><div class="label">características numéricas consideradas</div></div>
+          <div class="stat"><div class="number">2</div><div class="label">características seleccionadas en el resultado mostrado</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="metodos">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="eyebrow">02 · Metodología</div>
+          <h2>Tres enfoques de reducción</h2>
+          <p class="muted">La aplicación desarrollada con Python y Streamlit permite seleccionar una técnica y configurar la cantidad de componentes o características.</p>
+        </div>
+        <div class="grid cards">
+          <article class="method"><div class="symbol">◉</div><span class="pill">Transformación</span><h3>PCA</h3><p>El Análisis de Componentes Principales crea componentes nuevos que resumen parte de la variabilidad de las características numéricas. Los componentes no corresponden directamente a columnas originales.</p></article>
+          <article class="method"><div class="symbol">↗</div><span class="pill">Separación de clases</span><h3>LDA</h3><p>El Análisis Discriminante Lineal utiliza las etiquetas de clase para encontrar combinaciones de variables que favorezcan la separación entre los grupos.</p></article>
+          <article class="method"><div class="symbol">⌁</div><span class="pill">Selección</span><h3>SelectKBest · ANOVA F</h3><p>Evalúa cada característica numérica individualmente frente a la variable objetivo y conserva las K características con las puntuaciones F más altas.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="resultados">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="eyebrow">03 · Resultado observado</div>
+          <h2>Una representación más compacta</h2>
+          <p class="muted">En la ejecución capturada se seleccionaron dos variables predictoras mediante SelectKBest con ANOVA F-value. Se conservaron los registros y la etiqueta objetivo.</p>
+        </div>
+        <div class="grid stats" style="margin-bottom:22px">
+          <div class="stat"><div class="number">80%</div><div class="label">menos características numéricas: de 10 a 2</div></div>
+          <div class="stat"><div class="number">3</div><div class="label">columnas finales: 2 predictoras y la variable objetivo</div></div>
+          <div class="stat"><div class="number">0</div><div class="label">filas eliminadas por la reducción mostrada</div></div>
+          <div class="stat"><div class="number">y</div><div class="label">variable objetivo: yes / no</div></div>
+        </div>
+        <div class="result-panel">
+          <h3>Características seleccionadas</h3>
+          <p class="muted">Las puntuaciones F mostradas a continuación son aproximaciones del análisis del archivo completo y sirven para comparar la asociación estadística dentro de este dataset.</p>
+          <div class="bar-row"><strong>duration</strong><div class="bar-track"><div class="bar" style="width:100%"></div></div><div class="bar-value">≈ 8.094</div></div>
+          <div class="bar-row"><strong>nr.employed</strong><div class="bar-track"><div class="bar" style="width:73.2%"></div></div><div class="bar-value">≈ 5.927</div></div>
+          <div class="callout" style="margin-top:22px"><strong>Interpretación:</strong> ANOVA identifica una asociación estadística importante entre estas variables y <code>y</code>. Una puntuación alta no demuestra causalidad ni garantiza que un modelo entrenado con ellas generalice bien a datos nuevos.</div>
+        </div>
+        <div class="table-wrap" style="margin-top:22px">
+          <table>
+            <thead><tr><th>Columna</th><th>Rol</th><th>Interpretación</th></tr></thead>
+            <tbody>
+              <tr><td><code>duration</code></td><td>Predictora</td><td>Duración de la llamada, en segundos.</td></tr>
+              <tr><td><code>nr.employed</code></td><td>Predictora</td><td>Indicador del contexto económico relacionado con el empleo.</td></tr>
+              <tr><td><code>y</code></td><td>Objetivo</td><td>Resultado de la campaña: <code>yes</code> o <code>no</code>.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="muted" style="font-size:.88rem;margin-top:12px">Nota: la reducción del 80 % se refiere a las 10 características numéricas que el código considera antes de seleccionar, no a las 21 columnas totales del CSV original.</p>
+      </div>
+    </section>
+
+    <section id="limitaciones">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="eyebrow">04 · Lectura crítica</div>
+          <h2>Resultados que deben interpretarse con cuidado</h2>
+          <p class="muted">Reducir el número de variables es un resultado de procesamiento; por sí solo no demuestra que el modelo sea más preciso o útil.</p>
+        </div>
+        <div class="grid cards">
+          <article class="card warning"><span class="pill">Riesgo importante</span><h3>Posible fuga de información</h3><p><code>duration</code> se conoce durante o después de la llamada. Si el objetivo es decidir antes de llamar qué clientes contratarán, debe evaluarse un modelo sin esta variable.</p></article>
+          <article class="card"><span class="pill">Evaluación</span><h3>Clases desbalanceadas</h3><p>En el dataset, aproximadamente el 88,7 % de las respuestas son <code>no</code> y el 11,3 % son <code>yes</code>. La exactitud sola puede ocultar un mal desempeño al detectar contrataciones.</p></article>
+          <article class="card"><span class="pill">Alcance actual</span><h3>Variables categóricas excluidas</h3><p>El código actual procesa características numéricas y deja fuera las categóricas. Codificarlas adecuadamente permitiría evaluar la información que aportan.</p></article>
+        </div>
+        <div class="callout" style="margin-top:20px"><strong>Importante:</strong> la selección de características debe ajustarse solo con los datos de entrenamiento. Después se evalúa con datos separados que no hayan participado en la selección, la imputación ni el escalado.</div>
+      </div>
+    </section>
+
+    <section id="conclusion">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="eyebrow">05 · Conclusión</div>
+          <h2>Reducir con criterio, evaluar con evidencia</h2>
+        </div>
+        <div class="result-panel conclusion">
+          <p>El proyecto permitió desarrollar una aplicación interactiva para explorar técnicas de reducción de dimensionalidad sobre el conjunto de datos Bank Marketing. La implementación integra PCA, LDA y SelectKBest, ofreciendo distintas maneras de transformar o seleccionar características numéricas mediante una interfaz accesible.</p>
+          <p>En el resultado presentado, SelectKBest con ANOVA F-value redujo de diez a dos las características numéricas consideradas, seleccionando <code>duration</code> y <code>nr.employed</code> y conservando los 41.188 registros y la variable objetivo <code>y</code>. Esta representación más compacta facilita el análisis, aunque no prueba por sí sola una mejora en el rendimiento predictivo.</p>
+          <p>Para avanzar hacia un sistema confiable, es necesario comparar los métodos con una partición adecuada de entrenamiento y prueba, considerar las variables categóricas, evaluar métricas apropiadas para las clases desbalanceadas y comprobar el efecto de excluir <code>duration</code> cuando la predicción deba realizarse antes del contacto con el cliente.</p>
+          <p><strong>En síntesis, el valor de la reducción de dimensionalidad no consiste únicamente en utilizar menos variables, sino en conservar información útil y verificar, mediante una evaluación rigurosa, que la simplificación contribuye a modelos fiables y a decisiones mejor fundamentadas.</strong></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="futuro">
+      <div class="wrap">
+        <div class="section-head"><div class="eyebrow">06 · Próximos pasos</div><h2>Cómo fortalecer el proyecto</h2></div>
+        <div class="card">
+          <ul class="checklist">
+            <li>Comparar PCA, LDA y SelectKBest usando las mismas particiones de datos.</li>
+            <li>Separar los datos antes de ajustar imputación, escalado y selección de características.</li>
+            <li>Medir precisión, recall, F1-score, ROC-AUC y matriz de confusión.</li>
+            <li>Comparar el resultado con y sin <code>duration</code> según el momento real de predicción.</li>
+            <li>Codificar las variables categóricas y estudiar si mejoran la utilidad del modelo.</li>
+            <li>Documentar las métricas obtenidas antes de afirmar que un método es superior a otro.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="wrap footer-inner">
+      <div><strong>Proyecto de reducción de dimensionalidad</strong><br>Bank Marketing · Python · Pandas · Scikit-learn · Streamlit</div>
+      <div>Web académica adaptable · HTML, CSS y JavaScript</div>
+    </div>
+  </footer>
+</body>
+</html>
